@@ -1,5 +1,7 @@
 import { createSignal, createEffect, For, Show, untrack } from "solid-js";
 import { useKeyDownEvent } from "@solid-primitives/keyboard";
+import { AddScript } from "./AddScript";
+import { getScripts } from "./firebase";
 import './TypingPrompt.css';
 
 const words = 'Words to see and type. Just as they appear.';
@@ -11,18 +13,20 @@ let initChars = words.split('').map((c) => {
 initChars[0].style = 'char-cursor';
 initChars.push({isEnd: true});
 
-function Cursor(props) {
-    return (<span class='char-cursor'>{props.char}</span>);
-}
-
 export function TypingPrompt() {
     const [chars, setChars] = createSignal(initChars);
+    const [showPrompt, setShowPrompt] = createSignal(false);
+    const togglePrompt = () => {
+        // setShowPrompt(!showPrompt());
+        console.log('toggle prompt');
+    }
+
     let i = 0;
 
     const event = useKeyDownEvent();
     createEffect(() => {
         const e = event();
-        if (e) {
+        if (e && showPrompt()) {
             console.log(e.key);
             const charsCopy = untrack(() => chars());
             if (e.key.length === 1) {
@@ -64,10 +68,15 @@ export function TypingPrompt() {
     });
 
     return (
-        <For each={chars()}>
-            {(char) => {
-                return (<span class={char.style}>{char.answer}</span>);
-            }}
-        </For>
+        <>
+            <Show when={showPrompt()} fallback={<AddScript />}>
+                <For each={chars()}>
+                    {(char) => {
+                        return (<span class={char.style}>{char.answer}</span>);
+                    }}
+                </For>
+            </Show>
+            <button onClick={togglePrompt}>Toggle Prompt</button>
+        </>
     );
 }
