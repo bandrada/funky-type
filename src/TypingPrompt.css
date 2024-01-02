@@ -1,0 +1,23 @@
+.char-neutral {
+    color: gray;
+}
+
+.char-correct {
+    color: cyan;
+}
+
+.char-incorrect {
+    color: magenta;
+}
+
+.char-cursor {
+    background-color: gray;
+    color: yellow;
+    animation: blinker 1s linear infinite;
+}
+
+@keyframes blinker {
+    50% {
+        opacity: 0;
+    }
+}
