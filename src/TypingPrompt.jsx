@@ -15,10 +15,9 @@ initChars.push({isEnd: true});
 
 export function TypingPrompt() {
     const [chars, setChars] = createSignal(initChars);
-    const [showPrompt, setShowPrompt] = createSignal(false);
+    const [showPrompt, setShowPrompt] = createSignal(true);
     const togglePrompt = () => {
-        // setShowPrompt(!showPrompt());
-        console.log('toggle prompt');
+        setShowPrompt(!showPrompt());
     }
 
     let i = 0;
@@ -33,13 +32,12 @@ export function TypingPrompt() {
                 // set current spot to correct or incorrect
                 // move forward one in the chars array
                 // console.log(charsCopy);
-                console.log(charsCopy);
                 const typed = charsCopy[i].typed + e.key;
                 const style = charsCopy[i].answer === e.key ? 'char-correct' : 'char-incorrect';
                 const char = {...charsCopy[i], typed: typed, style: style};
                 const charCursor = {...charsCopy[i +1], style: 'char-cursor'};
-                console.log(char);
-                console.log(charCursor);
+                // console.log(char);
+                // console.log(charCursor);
                 if(!charCursor.isEnd) {
                     setChars(charsCopy.toSpliced(i, 2, char, charCursor));
                     i++;
@@ -54,13 +52,13 @@ export function TypingPrompt() {
                     i--;
                     const char = {...charsCopy[i +1], style: 'char-neutral'};
                     const charCursor = {...charsCopy[i], style: 'char-cursor'};
-                    console.log(char);
-                    console.log(charCursor);
+                    // console.log(char);
+                    // console.log(charCursor);
                     setChars(charsCopy.toSpliced(i, 2, charCursor, char));
                 } else if (charsCopy[i+1].isEnd) {
                     const charCursor = {...charsCopy[i], style: 'char-cursor'};
                     setChars(charsCopy.toSpliced(i, 1, charCursor));
-                    console.log(charsCopy);
+                    // console.log(charsCopy);
                 }
             }
             console.log(i);

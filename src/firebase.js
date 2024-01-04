@@ -19,7 +19,7 @@ export async function addScript(script) {
             title: script.title,
             text: script.text
         });
-        console.log('script was added with id: ' + docRef.id);
+        return docRef.id;
     } catch(error) {
         console.error(error);
     }

@@ -12,30 +12,39 @@ export function AddScript() {
     }
 
     return (
-        <form>
+        <div>
+            <div>Title</div>
+            <input value={script().title} onInput={(e) => { setScript({...script(), title: e.currentTarget.value })}}></input>
+            <div>Text</div>
+            <textarea value={script().text} onInput={(e) => { setScript({...script(), text: e.currentTarget.value })}}></textarea>
             <div>
-                <label for='title'>Title</label>
-                <input 
-                    id='title' 
-                    value={script().title}
-                    onInput={(e) => {
-                        setScript({...script(), title: e.currentTarget.value });
-                    }}
-                />
+                <button onClick={addScriptHandler}>Add script</button>
             </div>
-            <div>
-                <label for='text'>Text</label>
-                <input 
-                    id='text' 
-                    value={script().text}
-                    onInput={(e) => {
-                        setScript({...script(), text: e.currentTarget.value });
-                    }}
-                />
-            </div>
-            <button type='submit' onClick={addScriptHandler}>
-                Add Script
-            </button>
-        </form>
+        </div>
+        // <form>
+        //     <div>
+        //         <label for='title'>Title</label>
+        //         <input 
+        //             id='title' 
+        //             value={script().title}
+        //             onInput={(e) => {
+        //                 setScript({...script(), title: e.currentTarget.value });
+        //             }}
+        //         />
+        //     </div>
+        //     <div>
+        //         <label for='text'>Text</label>
+        //         <input 
+        //             id='text' 
+        //             value={script().text}
+        //             onInput={(e) => {
+        //                 setScript({...script(), text: e.currentTarget.value });
+        //             }}
+        //         />
+        //     </div>
+        //     <button type='submit' onClick={addScriptHandler}>
+        //         Add Script
+        //     </button>
+        // </form>
     );
 }
