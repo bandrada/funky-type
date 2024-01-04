@@ -1,19 +1,25 @@
 import { createSignal, createEffect, For, Show, untrack } from "solid-js";
 import { useKeyDownEvent } from "@solid-primitives/keyboard";
 import { AddScript } from "./AddScript";
-import { getScripts } from "./firebase";
+import { getScripts, getRandomScript } from "./firebase";
 import './TypingPrompt.css';
 
-const words = 'Words to see and type. Just as they appear.';
-// [{answer: 'W', typed: ''},]
-let initChars = words.split('').map((c) => {
-    return { answer: c, typed: '', style: 'char-neutral' };
-});
-
-initChars[0].style = 'char-cursor';
-initChars.push({isEnd: true});
-
-export function TypingPrompt() {
+export async function TypingPrompt() {
+    const getRandomInitialWords = async () => {
+        console.log('get random words');
+        let script = await getRandomScript();
+        console.log(script);
+        // [{answer: 'W', typed: ''},]
+        let chars = script.text.split('').map((c) => {
+            return { answer: c, typed: '', style: 'char-neutral' };
+        });
+        chars[0].style = 'char-cursor';
+        chars.push({isEnd: true});
+        return chars;
+    } 
+    
+    const initChars = await getRandomInitialWords();
+    console.log(initChars);
     const [chars, setChars] = createSignal(initChars);
     const [showPrompt, setShowPrompt] = createSignal(true);
     const togglePrompt = () => {
