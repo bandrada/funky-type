@@ -26,20 +26,7 @@ export async function addScript(script) {
 }
 
 export async function getScripts() {
-    console.log('firebase get all');
-    const snapshot = await getDocs(collection(db, 'scripts'));
-    let scripts = [];
-    snapshot.forEach((doc) => {
-        scripts.push(doc.data());
-    });
-    console.log({'scripts': scripts});
+    const scripts = await getDocs(collection(db, 'scripts'));
+    console.log(scripts);
     return scripts;
 } 
-
-export async function getRandomScript() {
-    const scripts = await getScripts();
-    console.log('firebase get random');
-    const randi = Math.floor(Math.random() * (scripts.length - 1));
-    console.log(randi);
-    return scripts[randi];
-}

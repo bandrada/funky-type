@@ -1,37 +1,20 @@
-import { createSignal, createEffect, createResource, For, Show, untrack } from "solid-js";
+import { createSignal, createEffect, For, Show, untrack } from "solid-js";
 import { useKeyDownEvent } from "@solid-primitives/keyboard";
 import { AddScript } from "./AddScript";
-import { getScripts, getRandomScript } from "./firebase";
+import { getScripts } from "./firebase";
 import './TypingPrompt.css';
 
-const getRandomInitialWords = async () => {
-    console.log('get random words');
-    let script = await getRandomScript();
-    console.log(script);
-    // [{answer: 'W', typed: ''},]
-    let chars = script.text.split('').map((c) => {
-        return { answer: c, typed: '', style: 'char-neutral' };
-    });
-    chars[0].style = 'char-cursor';
-    chars.push({isEnd: true});
-    return chars;
-};
+const words = 'Words to see and type. Just as they appear.';
+// [{answer: 'W', typed: ''},]
+let initChars = words.split('').map((c) => {
+    return { answer: c, typed: '', style: 'char-neutral' };
+});
+
+initChars[0].style = 'char-cursor';
+initChars.push({isEnd: true});
 
 export function TypingPrompt() {
-    const [awaitScript, setAwaitScript] = createSignal({});
-    const [script] = createResource(awaitScript, getRandomScript);
-
-    console.log('get random words ' + script.loading);
-    console.log(script());
-    // [{answer: 'W', typed: ''},]
-    let initChars = script().text.split('').map((c) => {
-        return { answer: c, typed: '', style: 'char-neutral' };
-    });
-    initChars[0].style = 'char-cursor';
-    initChars.push({isEnd: true});
-
-    console.log(initChars);
-    const [chars, setChars] = createSignal([{answer:'t', typed:''}]);
+    const [chars, setChars] = createSignal(initChars);
     const [showPrompt, setShowPrompt] = createSignal(true);
     const togglePrompt = () => {
         setShowPrompt(!showPrompt());
@@ -84,9 +67,6 @@ export function TypingPrompt() {
 
     return (
         <>
-            <Show when={!script.loading} fallback={<div>Script is loading</div>}>
-                {script()}
-            </Show>
             <Show when={showPrompt()} fallback={<AddScript />}>
                 <For each={chars()}>
                     {(char) => {
@@ -94,9 +74,7 @@ export function TypingPrompt() {
                     }}
                 </For>
             </Show>
-            <div>
-                <button onClick={togglePrompt}>Toggle Prompt</button>
-            </div>
+            <button onClick={togglePrompt}>Toggle Prompt</button>
         </>
     );
 }
