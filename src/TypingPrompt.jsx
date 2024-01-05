@@ -1,26 +1,37 @@
-import { createSignal, createEffect, For, Show, untrack } from "solid-js";
+import { createSignal, createEffect, createResource, For, Show, untrack } from "solid-js";
 import { useKeyDownEvent } from "@solid-primitives/keyboard";
 import { AddScript } from "./AddScript";
 import { getScripts, getRandomScript } from "./firebase";
 import './TypingPrompt.css';
 
-export async function TypingPrompt() {
-    const getRandomInitialWords = async () => {
-        console.log('get random words');
-        let script = await getRandomScript();
-        console.log(script);
-        // [{answer: 'W', typed: ''},]
-        let chars = script.text.split('').map((c) => {
-            return { answer: c, typed: '', style: 'char-neutral' };
-        });
-        chars[0].style = 'char-cursor';
-        chars.push({isEnd: true});
-        return chars;
-    } 
-    
-    const initChars = await getRandomInitialWords();
+const getRandomInitialWords = async () => {
+    console.log('get random words');
+    let script = await getRandomScript();
+    console.log(script);
+    // [{answer: 'W', typed: ''},]
+    let chars = script.text.split('').map((c) => {
+        return { answer: c, typed: '', style: 'char-neutral' };
+    });
+    chars[0].style = 'char-cursor';
+    chars.push({isEnd: true});
+    return chars;
+};
+
+export function TypingPrompt() {
+    const [awaitScript, setAwaitScript] = createSignal({});
+    const [script] = createResource(awaitScript, getRandomScript);
+
+    console.log('get random words ' + script.loading);
+    console.log(script());
+    // [{answer: 'W', typed: ''},]
+    let initChars = script().text.split('').map((c) => {
+        return { answer: c, typed: '', style: 'char-neutral' };
+    });
+    initChars[0].style = 'char-cursor';
+    initChars.push({isEnd: true});
+
     console.log(initChars);
-    const [chars, setChars] = createSignal(initChars);
+    const [chars, setChars] = createSignal([{answer:'t', typed:''}]);
     const [showPrompt, setShowPrompt] = createSignal(true);
     const togglePrompt = () => {
         setShowPrompt(!showPrompt());
@@ -73,6 +84,9 @@ export async function TypingPrompt() {
 
     return (
         <>
+            <Show when={!script.loading} fallback={<div>Script is loading</div>}>
+                {script()}
+            </Show>
             <Show when={showPrompt()} fallback={<AddScript />}>
                 <For each={chars()}>
                     {(char) => {
@@ -80,7 +94,9 @@ export async function TypingPrompt() {
                     }}
                 </For>
             </Show>
-            <button onClick={togglePrompt}>Toggle Prompt</button>
+            <div>
+                <button onClick={togglePrompt}>Toggle Prompt</button>
+            </div>
         </>
     );
 }
